@@ -8,78 +8,6 @@
       </qtimetadatafield>
     </qtimetadata>
     <section ident="root_section">
-      <section ident="i9adc261a6d3536ec781ad84e78b310db" title="Group">
-        <selection_ordering>
-          <selection>
-            <selection_number>1</selection_number>
-            <selection_extension>
-              <points_per_item>1</points_per_item>
-            </selection_extension>
-          </selection>
-        </selection_ordering>
-        <item ident="id57d8afd0df4fad1676e21d5d00d46d6" title="Question">
-          <itemmetadata>
-            <qtimetadata>
-              <qtimetadatafield>
-                <fieldlabel>question_type</fieldlabel>
-                <fieldentry>multiple_choice_question</fieldentry>
-              </qtimetadatafield>
-              <qtimetadatafield>
-                <fieldlabel>points_possible</fieldlabel>
-                <fieldentry>1</fieldentry>
-              </qtimetadatafield>
-              <qtimetadatafield>
-                <fieldlabel>assessment_question_identifierref</fieldlabel>
-                <fieldentry>i302c4ef847bf7d8083e42ea33c578ae4</fieldentry>
-              </qtimetadatafield>
-            </qtimetadata>
-          </itemmetadata>
-          <presentation>
-            <material>
-              <mattext texttype="text/html">&lt;div&gt;&lt;p&gt;G 1 Q 1&lt;/p&gt;&lt;/div&gt;</mattext>
-            </material>
-            <response_lid ident="response1" rcardinality="Single">
-              <render_choice>
-                <response_label ident="4564">
-                  <material>
-                    <mattext texttype="text/html">&lt;p&gt;A1&lt;/p&gt;</mattext>
-                  </material>
-                </response_label>
-                <response_label ident="8071">
-                  <material>
-                    <mattext texttype="text/plain">A2</mattext>
-                  </material>
-                </response_label>
-                <response_label ident="2321">
-                  <material>
-                    <mattext texttype="text/plain">A3</mattext>
-                  </material>
-                </response_label>
-                <response_label ident="31">
-                  <material>
-                    <mattext texttype="text/plain">A4</mattext>
-                  </material>
-                </response_label>
-                <response_label ident="3500">
-                  <material>
-                    <mattext texttype="text/plain">A5</mattext>
-                  </material>
-                </response_label>
-              </render_choice>
-            </response_lid>
-          </presentation>
-          <resprocessing>
-            <outcomes>
-              <decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>
-            </outcomes>
-            <respcondition continue="No">
-              <conditionvar>
-                <varequal respident="response1">4564</varequal>
-              </conditionvar>
-              <setvar action="Set" varname="SCORE">100</setvar>
-            </respcondition>
-          </resprocessing>
-        </item>
         <item ident="i97272bab4aa24fa492ef0f385a822494" title="Question">
           <itemmetadata>
             <qtimetadata>
@@ -138,7 +66,6 @@
             </respcondition>
           </resprocessing>
         </item>
-      </section>
       <item ident="ia04cfccdfa3f02c80a7be2908c3df544" title="Question">
         <itemmetadata>
           <qtimetadata>
