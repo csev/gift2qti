@@ -55,7 +55,8 @@ formatted quiz text below so it can be converted to
 </p><p>
 This is still a <a href="https://github.com/csev/gift2qti" target="_blank">work in progress</a>
 and currently only supports single-answer multiple-choice, true/false, and essay questions.
-The sample text below has some GIFT formats that this tool does not yet support.
+The sample text below has some GIFT formats that this tool does not yet support so some of the questions
+below will not be converted.  Feel free to send me a Pull request on gitHub :).
 </p>
 <form method="post" action="convert.php" target="working" style="margin:20px;">
 <input type="submit" name="submit" class="btn btn-primary" value="Convert GIFT to QTI"
@@ -69,7 +70,8 @@ onclick="$('#myModal').modal('show');"><br/>
   <div class="modal-dialog" style="width:80%">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" 
+            onclick="$('#working').attr('src', 'waiting.php');" ><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="myModalLabel">Converting to QTI...</h4>
       </div>
       <div class="modal-body">

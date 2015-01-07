@@ -129,3 +129,21 @@ foreach($questions as $question) {
     }
 
 }
+
+$DOM = new DOMDocument('1.0');
+$DOM->preserveWhiteSpace = false;
+$DOM->formatOutput = true;
+$DOM->loadXML($QTI->asXML());
+echo "\nValidating (may take a few seconds)...\n";
+libxml_use_internal_errors(true);
+if ( ! $DOM->schemaValidate('xml/ims_qtiasiv1p2p1.xsd') ) {
+    echo "\nWarning: Quiz XML Not Valid\n";
+    $errors = libxml_get_errors();
+    foreach ($errors as $error) {
+        echo "Error:", libxml_display_error($error), "\n";
+    }
+    libxml_clear_errors();
+} else { 
+    echo "\nQuiz XML validated\n";
+}
+
