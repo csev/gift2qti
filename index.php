@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set('UTC');
+
 $text = 
 "// true/false
 ::Q1:: 1+1=2 {T}
@@ -338,6 +340,7 @@ foreach($questions as $question) {
     $dom->formatOutput = true;
     $dom->loadXML($QTI->asXML());
     echo $dom->saveXML();
+/*
     echo "\nValidating (may take a few seconds)...\n";
     if ( $dom->schemaValidate('xml/ims_qtiasiv1p2p1.xsd') ) {
         echo "\n===== Valid =======\n";
@@ -345,27 +348,39 @@ foreach($questions as $question) {
         echo "\n===== Not Valid =======\n";
     }
     $dom->save("quiz.xml");
-
-/*
-      <item ident="iefa720cea97fa125e2df7816d34d53ea" title="Question">
-        <itemmetadata>
-          <qtimetadata>
-            <qtimetadatafield>
-              <fieldlabel>question_type</fieldlabel>
-              <fieldentry>numerical_question</fieldentry>
-            </qtimetadatafield>
-            <qtimetadatafield>
-              <fieldlabel>points_possible</fieldlabel>
-              <fieldentry>1</fieldentry>
-            </qtimetadatafield>
-            <qtimetadatafield>
-              <fieldlabel>assessment_question_identifierref</fieldlabel>
-              <fieldentry>iaa9be15345648bc3203616b2ccb41c21</fieldentry>
-            </qtimetadatafield>
-          </qtimetadata>
-        </itemmetadata>
 */
 
+unlink("quiz.zip");
+echo "Making a ZIP\n";
+$zip = new ZipArchive();
+if ($zip->open("quiz.zip", ZipArchive::CREATE)!==TRUE) {
+    exit("cannot open <quiz.zip>\n");
+}
 
+// Stuff we substitute...
+$quiz_id = 'i'.$uuid;
+$today = date('Y-m-d');
+$ref_id = 'r'.uniqid();
+$manifest_id = 'm'.uniqid();
+$title = "Title goes here";
+$desc = "Description goes here";
+$source = array("__DATE__", "__QUIZ_ID__","__REF_ID__", "__TITLE__","__DESCRIPTION__", "__MANIFEST_ID__");
+$dest = array($today, $quiz_id, $ref_id, $title, $desc, $manifest_id);
 
+// Add the ims Manifest
+$manifest = str_replace($source, $dest, file_get_contents('xml/imsmanifest.xml'));
+$zip->addFromString('imsmanifest.xml',$manifest);
+
+// Add the Assessment Metadata
+$meta = str_replace($source, $dest, file_get_contents('xml/assessment_meta.xml'));
+$zip->addFromString($quiz_id.'/assessment_meta.xml',$meta);
+
+// Add the quiz
+$zip->addFromString($quiz_id.'/'.$quiz_id.'.xml',$dom->saveXML());
+
+// $zip->addFile($thisdir . "/too.php","/testfromfile.php");
+echo "numfiles: " . $zip->numFiles . "\n";
+echo "status:" . $zip->status . "\n";
+
+$zip->close();
 
