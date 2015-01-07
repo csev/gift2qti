@@ -31,7 +31,7 @@ $text =
 ::Q8:: How are you? {}
 ";
 
-$text = 
+$xtext = 
 "// true/false
 ::Q1:: 1+1=2 {T}
 
