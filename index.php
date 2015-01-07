@@ -162,4 +162,7 @@ if ( count($errors) == 0 ) {
     print_r($errors);
 }
 
-print_r($questions);
+// print_r($questions);
+$XML = simplexml_load_file('xml/assessment.xml');
+var_dump($XML);
+
