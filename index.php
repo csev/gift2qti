@@ -147,11 +147,14 @@ foreach ( $raw_questions as $raw ) {
             $errors[] = "Mal-formed answer sequence: ".$raw;
         }
     }
-    echo "\nN: ",$name,"\n";
-    echo "Q: ",$question,"\n";
-    echo "A: ",$answer,"\n";
-    echo "Type:",$type,"\n";
-    $questions[] = array($name, $question, $answer, $type, $parsed_answer);
+    // echo "\nN: ",$name,"\nQ: ",$question,"\nA: ",$answer,"\nType:",$type,"\n";
+    $qobj = new stdClass();
+    $qobj->name = $name;
+    $qobj->question = $question;
+    $qobj->answer = $answer;
+    $qobj->type = $type;
+    $qobj->parsed_answer = $parsed_answer;
+    $questions[] = $qobj;
 }
 
 
@@ -162,7 +165,118 @@ if ( count($errors) == 0 ) {
     print_r($errors);
 }
 
-// print_r($questions);
-$XML = simplexml_load_file('xml/assessment.xml');
+print_r($questions);
+$QTI = simplexml_load_file('xml/assessment.xml');
 // var_dump($XML);
-echo $XML->asXML();
+// echo $XML->asXML();
+
+// echo $QTI->assessment->asXML();
+// echo $QTI->assessment['ident'], "\n";
+// echo $QTI->assessment->section->asXML();
+
+/*
+foreach ($QTI->assessment->section->item as $item) {
+    echo "-----------------\n";
+    echo $item->asXML(), "\n";
+}
+*/
+
+echo "\n=============================================================\n\n";
+$uuid = uniqid();
+$offset=100;
+foreach($questions as $question) {
+    $item = new SimpleXMLElement("<item></item>");
+    $item->addAttribute("title",$question->name);
+    $item->addAttribute("ident",$uuid.'_'.$offset++);
+    $itemmetadata = $item->addChild("itemmetadata");
+    $qtimetadata = $itemmetadata->addChild("qtimetadata");
+    $qtimetadatafield = $qtimetadata->addChild("qtimetadatafield");
+    $qtimetadatafield->addChild("fieldlabel", "question_type");
+    $qtimetadatafield->addChild("fieldentry", $question->type);
+    $qtimetadatafield = $qtimetadata->addChild("qtimetadatafield");
+    $qtimetadatafield->addChild("fieldlabel", "points_possible");
+    $qtimetadatafield->addChild("fieldentry", "1");
+    $qtimetadatafield = $qtimetadata->addChild("qtimetadatafield");
+    $qtimetadatafield->addChild("fieldlabel", "assessment_question_identifierref");
+    $qtimetadatafield->addChild("fieldentry", $uuid.'_'.$offset++);
+
+    $presentation = $item->addChild("presentation");
+    $material = $presentation->addChild("material");
+    $mattext = $material->addChild("mattext", $question->question);
+    $mattext->addAttribute("texttype", "text/plain");
+
+    if ( $question->type == 'true_false_question' ) {
+
+        $response_lid = $presentation->addChild('response_lid');
+        $response_lid->addAttribute("ident", "response1");
+        $response_lid->addAttribute("rcardinality", "Single");
+        $render_choice = $response_lid->addChild('render_choice');
+        $trueval = $offset++;
+        $response_label = $render_choice->addChild('response_label');
+        $response_label->addAttribute('ident', $trueval);
+        $material = $response_label->addChild("material");
+        $mattext = $material->addChild("mattext", "True");
+        $mattext->addAttribute("texttype", "text/plain");
+        $falseval = $offset++;
+        $response_label = $render_choice->addChild('response_label');
+        $response_label->addAttribute('ident', $falseval);
+        $material = $response_label->addChild("material");
+        $mattext = $material->addChild("mattext", "False");
+        $mattext->addAttribute("texttype", "text/plain");
+
+        $resprocessing = $item->addChild("resprocessing");
+        $outcomes = $resprocessing->addChild("outcomes");
+        $decvar = $outcomes->addChild("decvar");
+        $decvar->addAttribute("maxvalue", "100");
+        $decvar->addAttribute("minvalue", "0");
+        $decvar->addAttribute("varname", "SCORE");
+        $decvar->addAttribute("vartype", "Decimal");
+        $respcondition = $resprocessing->addChild("respcondition");
+        $respcondition->addAttribute("continue", "No");
+        $conditionvar = $respcondition->addChild("conditionvar");
+        $ans = strtolower($question->answer);
+        $val = strpos($ans,"t") === 0 ? $trueval : $falseval;
+        $varequal = $conditionvar->addChild("varequal",$val);
+        $varequal->addAttribute("respident", "response1");
+        $setvar = $respcondition->addChild("setvar", 100);
+        $setvar->addAttribute("action", "Set");
+        $setvar->addAttribute("varname", "SCORE");
+
+        continue;
+    }
+
+    print_r($question);
+
+    $dom = new DOMDocument('1.0');
+    $dom->preserveWhiteSpace = false;
+    $dom->formatOutput = true;
+    $dom->loadXML($item->asXML());
+    echo $dom->saveXML();
+    
+    break;
+}
+
+
+/*
+      <item ident="iefa720cea97fa125e2df7816d34d53ea" title="Question">
+        <itemmetadata>
+          <qtimetadata>
+            <qtimetadatafield>
+              <fieldlabel>question_type</fieldlabel>
+              <fieldentry>numerical_question</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>points_possible</fieldlabel>
+              <fieldentry>1</fieldentry>
+            </qtimetadatafield>
+            <qtimetadatafield>
+              <fieldlabel>assessment_question_identifierref</fieldlabel>
+              <fieldentry>iaa9be15345648bc3203616b2ccb41c21</fieldentry>
+            </qtimetadatafield>
+          </qtimetadata>
+        </itemmetadata>
+*/
+
+
+
+
