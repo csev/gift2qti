@@ -31,6 +31,13 @@ $text =
 ::Q8:: How are you? {}
 ";
 
+$text = 
+"// true/false
+::Q1:: 1+1=2 {T}
+
+::Q8:: How are you? {}
+";
+
 $errors = [];
 $raw_questions = array();
 $question = "";
@@ -73,6 +80,9 @@ foreach ( $raw_questions as $raw ) {
     } else {
         $question = trim(substr($text,0,$spos-1)) . " [_____] " . trim(substr($text,$epos+1));
         $type = 'short_answer_question';
+        
+        $errors[] = "Short answer questions not yet supported: ".$raw;
+        continue;
     }
 
     if ( $type == 'short_answer_question' ) {
@@ -93,6 +103,7 @@ foreach ( $raw_questions as $raw ) {
     }
     $answers = [];
     $parsed_answer = false;
+    $correct_answers = 0;
     if ( $type == 'short_answer_question' || $type == 'multiple_choice_question') {
         $parsed_answer = [];
         $correct = null;
@@ -109,6 +120,7 @@ foreach ( $raw_questions as $raw ) {
                     $parsed_answer = [];
                     break;
                 }
+                if ( $correct ) $correct_answers++;
                 $parsed_answer[] = array($correct, trim($answer_text), trim($feedback));
                 // Set up for the next one
                 $correct = null;
@@ -146,6 +158,15 @@ foreach ( $raw_questions as $raw ) {
         if ( count($parsed_answer) < 1 ) {
             $errors[] = "Mal-formed answer sequence: ".$raw;
         }
+        if ( $correct_answers < 1 ) {
+            $errors[] = "No correct answers found: ".$raw;
+            continue;
+        }
+        if ( $correct_answers > 1 ) {
+            $type = 'multiple_answers_question';
+            $errors[] = "No support for multiple_answers_question type: ".$raw;
+            continue;
+        }
     }
     // echo "\nN: ",$name,"\nQ: ",$question,"\nA: ",$answer,"\nType:",$type,"\n";
     $qobj = new stdClass();
@@ -154,6 +175,7 @@ foreach ( $raw_questions as $raw ) {
     $qobj->answer = $answer;
     $qobj->type = $type;
     $qobj->parsed_answer = $parsed_answer;
+    $qobj->correct_answers = $correct_answers;
     $questions[] = $qobj;
 }
 
@@ -181,11 +203,18 @@ foreach ($QTI->assessment->section->item as $item) {
 }
 */
 
-echo "\n=============================================================\n\n";
 $uuid = uniqid();
 $offset=100;
+unset($QTI->assessment);
+$QTI->addChild("assessment");
+$QTI->assessment->addAttribute("ident", $uuid);
+$QTI->assessment->addAttribute("title", "Gift2QTI Convertor");
+$section = $QTI->assessment->addChild('section');
+$section->addAttribute("ident", "root_section");
+
+echo "\n=============================================================\n\n";
 foreach($questions as $question) {
-    $item = new SimpleXMLElement("<item></item>");
+    $item = $section->addChild("item");
     $item->addAttribute("title",$question->name);
     $item->addAttribute("ident",$uuid.'_'.$offset++);
     $itemmetadata = $item->addChild("itemmetadata");
@@ -241,21 +270,81 @@ foreach($questions as $question) {
         $setvar = $respcondition->addChild("setvar", 100);
         $setvar->addAttribute("action", "Set");
         $setvar->addAttribute("varname", "SCORE");
-
-        continue;
     }
 
-    print_r($question);
+    if ( $question->type == 'multiple_choice_question' ) {
+
+        $response_lid = $presentation->addChild('response_lid');
+        $response_lid->addAttribute("ident", "response1");
+        $response_lid->addAttribute("rcardinality", "Single");
+        $render_choice = $response_lid->addChild('render_choice');
+
+        $correct = null;
+        foreach ( $question->parsed_answer as $parsed_answer )  {
+            $val = $offset++;
+            if ( $parsed_answer[0] === true ) $correct = $val;
+            $response_label = $render_choice->addChild('response_label');
+            $response_label->addAttribute('ident', $val);
+            $material = $response_label->addChild("material");
+            $mattext = $material->addChild("mattext", $parsed_answer[1]);
+            $mattext->addAttribute("texttype", "text/plain");
+        }
+
+        $resprocessing = $item->addChild("resprocessing");
+        $outcomes = $resprocessing->addChild("outcomes");
+        $decvar = $outcomes->addChild("decvar");
+        $decvar->addAttribute("maxvalue", "100");
+        $decvar->addAttribute("minvalue", "0");
+        $decvar->addAttribute("varname", "SCORE");
+        $decvar->addAttribute("vartype", "Decimal");
+        $respcondition = $resprocessing->addChild("respcondition");
+        $respcondition->addAttribute("continue", "No");
+        $conditionvar = $respcondition->addChild("conditionvar");
+        $varequal = $conditionvar->addChild("varequal",$correct);
+        $varequal->addAttribute("respident", "response1");
+        $setvar = $respcondition->addChild("setvar", 100);
+        $setvar->addAttribute("action", "Set");
+        $setvar->addAttribute("varname", "SCORE");
+    }
+
+    if ( $question->type == 'essay_question' ) {
+
+        $response_str = $presentation->addChild('response_str');
+        $response_str->addAttribute("ident", "response1");
+        $response_str->addAttribute("rcardinality", "Single");
+        $render_fib = $response_str->addChild('render_fib');
+        $response_label = $render_fib->addChild('response_label');
+        $response_label->addAttribute('ident', $offset++);
+        $response_label->addAttribute('rshuffle', "No");
+
+        $resprocessing = $item->addChild("resprocessing");
+        $outcomes = $resprocessing->addChild("outcomes");
+        $decvar = $outcomes->addChild("decvar");
+        $decvar->addAttribute("maxvalue", "100");
+        $decvar->addAttribute("minvalue", "0");
+        $decvar->addAttribute("varname", "SCORE");
+        $decvar->addAttribute("vartype", "Decimal");
+        $respcondition = $resprocessing->addChild("respcondition");
+        $respcondition->addAttribute("continue", "No");
+        $conditionvar = $respcondition->addChild("conditionvar");
+        $other = $conditionvar->addChild("other");
+
+    }
+
+}
 
     $dom = new DOMDocument('1.0');
     $dom->preserveWhiteSpace = false;
     $dom->formatOutput = true;
-    $dom->loadXML($item->asXML());
+    $dom->loadXML($QTI->asXML());
     echo $dom->saveXML();
-    
-    break;
-}
-
+    echo "\nValidating (may take a few seconds)...\n";
+    if ( $dom->schemaValidate('xml/ims_qtiasiv1p2p1.xsd') ) {
+        echo "\n===== Valid =======\n";
+    } else {
+        echo "\n===== Not Valid =======\n";
+    }
+    $dom->save("quiz.xml");
 
 /*
       <item ident="iefa720cea97fa125e2df7816d34d53ea" title="Question">
