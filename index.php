@@ -58,14 +58,12 @@ and currently only supports single-answer multiple-choice, true/false, and essay
 The sample text below has some GIFT formats that this tool does not yet support.
 </p>
 <form method="post" action="convert.php" target="working" style="margin:20px;">
-<input type="submit" name="submit" class="btn btn-primary" value="Convert GIFT to QTI"><br/>
+<input type="submit" name="submit" class="btn btn-primary" value="Convert GIFT to QTI"
+onclick="$('#myModal').modal('show');"><br/>
 <textarea rows="30" style="width: 90%" name="text">
 <?= htmlent_utf8($text); ?>
 </textarea>
 </form>
-<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-  Launch demo modal
-</button>
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog" style="width:80%">
@@ -75,7 +73,7 @@ The sample text below has some GIFT formats that this tool does not yet support.
         <h4 class="modal-title" id="myModalLabel">Converting to QTI...</h4>
       </div>
       <div class="modal-body">
-        <iframe id="working" src="waiting.php" style="width:90%; height: 400px"></iframe>
+        <iframe id="working" name="working" src="waiting.php" style="width:90%; height: 400px"></iframe>
       </div>
     </div>
   </div>
