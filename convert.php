@@ -2,8 +2,12 @@
 
 session_start();
 unset($_SESSION['quiz']);
+unset($_SESSION['title']);
+unset($_SESSION['name']);
 if ( !isset($_POST['text']) ) die('Missing input data');
 $text =  $_POST['text'];
+if ( isset($_POST['title']) ) $_SESSION['title'] = $_POST['title'];
+if ( isset($_POST['name']) ) $_SESSION['name'] = $_POST['name'];
 
 echo("<pre>\n");
 require_once("parse.php");
@@ -23,6 +27,7 @@ require_once("make_qti.php");
 if ( !isset($DOM) ) die("Conversion not completed");
 
 $_SESSION['quiz'] = $DOM->saveXML();
+$_SESSION['uuid'] = $uuid;
 
 ?>
 Conversion complete...

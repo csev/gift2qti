@@ -36,7 +36,6 @@ $text =
 
 if ( isset($_POST['text']) ) $text = $_POST['text'];
 
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -59,9 +58,12 @@ The sample text below has some GIFT formats that this tool does not yet support 
 below will not be converted.  Feel free to send me a Pull request on gitHub :).
 </p>
 <form method="post" action="convert.php" target="working" style="margin:20px;">
+<p style="float:right">
 <input type="submit" name="submit" class="btn btn-primary" value="Convert GIFT to QTI"
-onclick="$('#myModal').modal('show');"><br/>
-<textarea rows="30" style="width: 90%" name="text">
+onclick="$('#myModal').modal('show');"></p>
+<p>Quiz Title: <input type="text" name="title" size="60"/></p>
+<p>Quiz File Name (no suffix): <input type="text" name="name" size="30"/> (optional)</p>
+<textarea rows="30" style="width: 98%" name="text">
 <?= htmlent_utf8($text); ?>
 </textarea>
 </form>

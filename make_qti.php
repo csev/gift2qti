@@ -6,7 +6,8 @@ $offset=100;
 unset($QTI->assessment);
 $QTI->addChild("assessment");
 $QTI->assessment->addAttribute("ident", $uuid);
-$QTI->assessment->addAttribute("title", "Gift2QTI Convertor");
+$title = isset($_SESSION['title']) ? $_SESSION['title'] : 'Converted by the Gift2QTI Converter';
+$QTI->assessment->addAttribute("title", $title);
 $section = $QTI->assessment->addChild('section');
 $section->addAttribute("ident", "root_section");
 
