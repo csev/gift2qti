@@ -35,7 +35,23 @@ Conversion complete...
 </pre>
 <p>
 <a href="viewxml.php" target="_blank">View Quiz XML</a> |
-<a href="getzip.php" target="_blank">Download ZIP</a> 
+<a href="getzip.php" target="_blank">Download ZIP</a>
+    <?php
+    if (isset($_SESSION['content_item_return_url'])){
+        if ( isset($_POST['title']) ) {
+          $name = $_POST['title'];
+        } else{
+          $name = 'Gift Quiz';
+        }
+        $abs_url = str_replace("convert.php", "getzip.php?","http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
+        $return_url = htmlspecialchars($_SESSION['content_item_return_url']) .
+          "?return_type=file&text=". htmlspecialchars($name) . "&url=" .
+          urlencode(htmlspecialchars($abs_url . htmlspecialchars(SID)));
+        ?>
+         | <a href="<?php echo $return_url ?>" target="_parent">Return Zip to LMS</a>
+    <?php
+    }
+    ?>
 </p>
 <p>
 To upload to an LMS choose the ZIP format - it makes a small IMS Common Cartridge

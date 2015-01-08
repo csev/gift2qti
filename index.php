@@ -35,7 +35,7 @@ $text =
 ";
 
 if ( isset($_POST['text']) ) $text = $_POST['text'];
-
+if ( isset($_POST['ext_content_return_url']) ) $_SESSION['content_item_return_url'] = $_POST['ext_content_return_url'];
 ?>
 <!DOCTYPE html>
 <html>
