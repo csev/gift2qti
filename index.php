@@ -59,6 +59,9 @@ An some text afterwards
 
 if ( isset($_POST['text']) ) $text = $_POST['text'];
 if ( isset($_POST['ext_content_return_url']) ) $_SESSION['content_item_return_url'] = $_POST['ext_content_return_url'];
+
+$config_url = str_replace("index.php", "lti_config.php", curPageUrl());
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -70,7 +73,7 @@ if ( isset($_POST['ext_content_return_url']) ) $_SESSION['content_item_return_ur
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
 
 </head>
-<body>
+<body style="margin: 5px;">
 <p>Please enter your <a href="https://docs.moodle.org/28/en/GIFT_format" target="_blank">GIFT</a> 
 formatted quiz text below so it can be converted to 
 <a href="http://www.imsglobal.org/question/" target="_blank">QTI 1.2.1</a>.
@@ -92,6 +95,10 @@ onclick="$('#myModal').modal('show');"></p>
 <p><input type="checkbox" name="bypass" value="bypass">
 Do not validate the XML</p>
 </form>
+<p>If you want to add this tool to the <b>Settings -&gt; Import Content</b>
+in the Canvas LMS use this URL:
+<a href="<?= $config_url ?>" target="_blank"><?= $config_url ?></a>
+</p>
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog" style="width:80%">
