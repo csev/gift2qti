@@ -1,5 +1,7 @@
 <?php
 
+require_once "util.php";
+
 session_start();
 unset($_SESSION['quiz']);
 unset($_SESSION['title']);
@@ -43,10 +45,10 @@ Conversion complete...
         } else{
           $name = 'Gift Quiz';
         }
-        $abs_url = str_replace("convert.php", "getzip.php?","http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
+        $abs_url = str_replace("convert.php", "getzip.php?", curPageURL());
         $return_url = htmlspecialchars($_SESSION['content_item_return_url']) .
           "?return_type=file&text=". htmlspecialchars($name) . "&url=" .
-          urlencode(htmlspecialchars($abs_url . htmlspecialchars(SID)));
+          urlencode(htmlspecialchars($abs_url . session_name() . '='. session_id() ));
         ?>
          | <a href="<?php echo $return_url ?>" target="_parent">Return Zip to LMS</a>
     <?php

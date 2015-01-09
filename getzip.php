@@ -1,8 +1,12 @@
 <?php
 require_once "util.php";
 date_default_timezone_set('UTC');
+if ( isset($_GET[session_name()]) ) session_id($_GET[session_name()]);
 session_start();
-if ( !isset($_SESSION['quiz']) ) die('Missing quiz data');
+if ( !isset($_SESSION['quiz']) ) {
+    error_log('GIFT2QTI Missing quiz data '.curPageUrl());
+    die('GIFT2QTI Missing quiz data');
+}
 // Stuff we substitute...
 $quiz_id = 'i'.uniqid();
 $today = date('Y-m-d');
