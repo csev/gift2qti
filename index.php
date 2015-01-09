@@ -57,7 +57,7 @@ An some text afterwards
 ::Q11::[html]I wonder if <b>bold</b> goes through?
 { =yellow # right; good! ~red # wrong, it's yellow ~blue # wrong, it's yellow }";
 
-if ( isset($_POST['text']) ) $text = $_POST['text'];
+unset($_SESSION['content_item_return_url']);
 if ( isset($_POST['ext_content_return_url']) ) $_SESSION['content_item_return_url'] = $_POST['ext_content_return_url'];
 
 $config_url = str_replace("index.php", "lti_config.php", curPageUrl());
