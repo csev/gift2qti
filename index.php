@@ -32,7 +32,30 @@ $text =
 
 // essay
 ::Q8:: How are you? {}
-";
+
+// HTML with pre tags html code style
+::Q9::[html]Hello<br/>
+<pre>
+   Here is a less-than &lt;
+   and an ampersand &amp;
+</pre>
+An some text afterwards
+{ =yellow # right; good! ~red # wrong, it's yellow ~blue # wrong, it's yellow }
+
+// HTML with pre tags python code style
+::Q10::[html]Some code<br/>
+<pre>
+    if x &lt; 10 :
+        print \"too low\"
+    else : 
+        print \"just right\"
+</pre>
+An some text afterwards
+{ =yellow # right; good! ~red # wrong, it's yellow ~blue # wrong, it's yellow }
+
+// HTML with formatting
+::Q11::[html]I wonder if <b>bold</b> goes through?
+{ =yellow # right; good! ~red # wrong, it's yellow ~blue # wrong, it's yellow }";
 
 if ( isset($_POST['text']) ) $text = $_POST['text'];
 if ( isset($_POST['ext_content_return_url']) ) $_SESSION['content_item_return_url'] = $_POST['ext_content_return_url'];
@@ -61,11 +84,13 @@ below will not be converted.  Feel free to send me a Pull request on gitHub :).
 <p style="float:right">
 <input type="submit" name="submit" class="btn btn-primary" value="Convert GIFT to QTI"
 onclick="$('#myModal').modal('show');"></p>
-<p>Quiz Title: <input type="text" name="title" size="60"/></p>
+<p>Quiz Title: <input type="text" name="title" size="60" value="Converted using GIFT2QTI"/></p>
 <p>Quiz File Name (no suffix): <input type="text" name="name" size="30"/> (optional)</p>
 <textarea rows="30" style="width: 98%" name="text">
 <?= htmlent_utf8($text); ?>
 </textarea>
+<p><input type="checkbox" name="bypass" value="bypass">
+Do not validate the XML</p>
 </form>
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

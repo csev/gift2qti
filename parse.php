@@ -6,6 +6,7 @@ $question = "";
 $lines = explode("\n", $text);
 foreach ( $lines as $line ) {
     $line = rtrim($line);
+    // print $line."\n";
     if ( strpos($line, "//") === 0 ) continue;
     if ($line == "" ) {
         if ( strlen($question) > 0 ) {
@@ -14,9 +15,15 @@ foreach ( $lines as $line ) {
         }
         continue;
     }
-    if ( strlen($question) > 0 ) $question .= " ";
-    $question .= trim($line);
+    if ( strlen($question) > 0 ) $question .= "\n";
+    $question .= $line;
 }
+
+if ( strlen($question) > 0 ) {
+    $raw_questions[] = $question;
+}
+
+// var_dump_pre($raw_questions);
 
 $questions = array();
 foreach ( $raw_questions as $raw ) {
@@ -139,4 +146,6 @@ foreach ( $raw_questions as $raw ) {
     $qobj->correct_answers = $correct_answers;
     $questions[] = $qobj;
 }
+
+// var_dump_pre($questions);
 

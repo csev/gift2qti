@@ -15,3 +15,11 @@ function curPageURL() {
     return $pageURL;
 }
 
+function var_dump_pre($variable, $print=true) {
+    ob_start();
+    var_dump($variable);
+    $result = ob_get_clean();
+    if ( $print ) print htmlent_utf8($result);
+    return $result;
+}
+

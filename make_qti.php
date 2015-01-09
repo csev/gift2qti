@@ -29,8 +29,14 @@ foreach($questions as $question) {
 
     $presentation = $item->addChild("presentation");
     $material = $presentation->addChild("material");
-    $mattext = $material->addChild("mattext", $question->question);
-    $mattext->addAttribute("texttype", "text/plain");
+    $questext = $question->question;
+    $quesmime = "text/plain";
+    if ( strpos($questext,"[html]") === 0 ) {
+        $questext = ltrim(substr($questext,6));
+        $quesmime = "text/html";
+    }
+    $mattext = $material->addChild("mattext", $questext);
+    $mattext->addAttribute("texttype", $quesmime);
 
     if ( $question->type == 'true_false_question' ) {
 
@@ -131,13 +137,16 @@ foreach($questions as $question) {
 
 }
 
+
 $DOM = new DOMDocument('1.0');
 $DOM->preserveWhiteSpace = false;
 $DOM->formatOutput = true;
 $DOM->loadXML($QTI->asXML());
 echo "\nValidating (may take a few seconds)...\n";
 libxml_use_internal_errors(true);
-if ( ! $DOM->schemaValidate('xml/ims_qtiasiv1p2p1.xsd') ) {
+if ( isset($_SESSION['novalidate']) ) {
+    echo "\nContent validation bypassed...\n";
+} else if ( ! $DOM->schemaValidate('xml/ims_qtiasiv1p2p1.xsd') ) {
     echo "\nWarning: Quiz XML Not Valid\n";
     $errors = libxml_get_errors();
     foreach ($errors as $error) {
