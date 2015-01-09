@@ -1,6 +1,6 @@
 <?php
 
-$errors = [];
+$errors = array();
 $raw_questions = array();
 $question = "";
 $lines = explode("\n", $text);
@@ -63,11 +63,11 @@ foreach ( $raw_questions as $raw ) {
         $errors[] = "Could not determine question type: ".$raw;
         continue;
     }
-    $answers = [];
+    $answers = array();
     $parsed_answer = false;
     $correct_answers = 0;
     if ( $type == 'short_answer_question' || $type == 'multiple_choice_question') {
-        $parsed_answer = [];
+        $parsed_answer = array();
         $correct = null;
         $answer_text = false;
         $feedback = false;
@@ -79,7 +79,7 @@ foreach ( $raw_questions as $raw ) {
             if ( ( $ch == -1 || $ch == '=' || $ch == "~" ) && strlen($answer_text) > 0 ) {
                 if ( $correct === null || $answer_text === false ) {
                     $errors[] = "Mal-formed answer sequence: ".$raw;
-                    $parsed_answer = [];
+                    $parsed_answer = array();
                     break;
                 }
                 if ( $correct ) $correct_answers++;
