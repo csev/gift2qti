@@ -139,7 +139,7 @@ foreach($questions as $question) {
                 $varequal->addAttribute("respident", "response1");
             }
             foreach( $incorrect as $incor ) {
-                $not = $conditionvar->addChild("not");
+                $not = $and->addChild("not");
                 $varequal = $not->addChild("varequal",$incor);
                 $varequal->addAttribute("respident", "response1");
             }
