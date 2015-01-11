@@ -17,6 +17,13 @@ if ( isset($_POST['bypass']) ) $_SESSION['novalidate'] = 'bypass';
 echo("<pre>\n");
 require_once("parse.php");
 
+if ( count($questions) < 1 ) {
+    print "No questions found.";
+    exit();
+} else {
+    print "Found ".count($questions)." questions in the GIFT input.\n";
+}
+
 if ( count($errors) == 0 ) {
     print "Initial parse of GIFT data successful\n";
 } else {
@@ -26,7 +33,7 @@ if ( count($errors) == 0 ) {
 echo("\nCreating and validating the quiz XML....\n");
 flush();
 
-// print_r($questions);
+// var_dump($questions);
 
 require_once("make_qti.php");
 if ( !isset($DOM) ) die("Conversion not completed");

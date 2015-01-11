@@ -108,6 +108,7 @@ foreach ( $raw_questions as $raw ) {
             }
             if ( $ch == '~' ) {
                 $correct = false;
+                continue;
             }
 
             // right or wrong?

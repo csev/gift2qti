@@ -34,27 +34,33 @@ $text =
 ::Q8:: How are you? {}
 
 // HTML with pre tags html code style
-::Q9::[html]Hello<br/>
+::Q9::[html]The next two lines are in a pre tag.<br/>
 <pre>
    Here is a less-than &lt;
    and an ampersand &amp;
 </pre>
-An some text afterwards
+An some non-pre text after the pre section is done.
 { =yellow # right; good! ~red # wrong, it's yellow ~blue # wrong, it's yellow }
 
 // HTML with pre tags python code style
-::Q10::[html]Some code<br/>
+::Q10::[html]Some code in a pre block<br/>
 <pre>
     if x &lt; 10 :
         print \"too low\"
     else : 
         print \"just right\"
 </pre>
-An some text afterwards
+An some HTML after the end of the pre block
 { =yellow # right; good! ~red # wrong, it's yellow ~blue # wrong, it's yellow }
 
+// Make sure < and > make it through in plaintext questions
+::Q11:: In a plaintext question, does the <b> bold tag 'show' 
+\"with\" less than's and greater than's instead of turning stuff bold.
+{ =Do we see a < less than ~Do we see a > greater than 
+~Do we see a ' single quote ~Do we see a \" double quote}
+
 // HTML with formatting
-::Q11::[html]I wonder if <b>bold</b> goes through?
+::Q11::[html]In an HTML question, <b>bold</b> should simply appear as bold?
 { =yellow # right; good! ~red # wrong, it's yellow ~blue # wrong, it's yellow }";
 
 unset($_SESSION['content_item_return_url']);

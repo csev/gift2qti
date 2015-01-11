@@ -1,5 +1,15 @@
 <?php
 
+// When turning plain text into HTML to go into XML we need
+// to double encode the less-thans and greater-thans
+// Since the PHP XML serialization won't double-encode 
+// HTMLentities - we need to do it here
+function xml_double_encode_string($str) {
+    $from = array('&', '\'', '"', '<', '>');
+    $to = array('&amp;', '&apos;', '&quot;', '&amp;lt;', '&amp;gt;');
+    return(str_replace($from, $to, $str));
+}
+
 $QTI = simplexml_load_file('xml/assessment.xml');
 $uuid = uniqid();
 $offset=100;
@@ -30,13 +40,13 @@ foreach($questions as $question) {
     $presentation = $item->addChild("presentation");
     $material = $presentation->addChild("material");
     $questext = $question->question;
-    $quesmime = "text/plain";
     if ( strpos($questext,"[html]") === 0 ) {
         $questext = ltrim(substr($questext,6));
-        $quesmime = "text/html";
+    } else {
+        $questext = xml_double_encode_string(ltrim($questext));
     }
     $mattext = $material->addChild("mattext", $questext);
-    $mattext->addAttribute("texttype", $quesmime);
+    $mattext->addAttribute("texttype", 'text/html');
 
     if ( $question->type == 'true_false_question' ) {
 
