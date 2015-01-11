@@ -46,7 +46,7 @@ foreach ( $raw_questions as $raw ) {
     // We won't know until later if the question is short answer or not.
     if ( $epos == strlen($text)-1 ) {
         $question = trim(substr($text,0,$spos-1));
-        $sa_question = trim(substr($text,0,$spos-1)) . "[_____]";
+        $sa_question = $question;   // No blank at the end of the question
     } else {
         $question = trim(substr($text,0,$spos-1)) . " " . trim(substr($text,$epos+1));
         $sa_question = trim(substr($text,0,$spos-1)) . " [_____] " . trim(substr($text,$epos+1));
