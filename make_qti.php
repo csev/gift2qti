@@ -84,19 +84,27 @@ foreach($questions as $question) {
         $setvar = $respcondition->addChild("setvar", 100);
         $setvar->addAttribute("action", "Set");
         $setvar->addAttribute("varname", "SCORE");
+        continue; // XXX
     }
 
-    if ( $question->type == 'multiple_choice_question' ) {
+    if ( $question->type == 'multiple_choice_question' || 
+        $question->type == 'multiple_answers_question' ||
+        $question->type == 'short_answer_question' ) {
 
         $response_lid = $presentation->addChild('response_lid');
         $response_lid->addAttribute("ident", "response1");
         $response_lid->addAttribute("rcardinality", "Single");
         $render_choice = $response_lid->addChild('render_choice');
 
-        $correct = null;
+        $correct = array();;
+        $incorrect = array();;
         foreach ( $question->parsed_answer as $parsed_answer )  {
             $val = $offset++;
-            if ( $parsed_answer[0] === true ) $correct = $val;
+            if ( $parsed_answer[0] === true ) {
+                $correct[] = $val;
+            } else {
+                $incorrect[] = $val;
+            }
             $response_label = $render_choice->addChild('response_label');
             $response_label->addAttribute('ident', $val);
             $material = $response_label->addChild("material");
@@ -114,8 +122,26 @@ foreach($questions as $question) {
         $respcondition = $resprocessing->addChild("respcondition");
         $respcondition->addAttribute("continue", "No");
         $conditionvar = $respcondition->addChild("conditionvar");
-        $varequal = $conditionvar->addChild("varequal",$correct);
-        $varequal->addAttribute("respident", "response1");
+        if ( $question->type == 'multiple_choice_question' ) {
+            $varequal = $conditionvar->addChild("varequal",$correct[0]);
+            $varequal->addAttribute("respident", "response1");
+        } else if ( $question->type == 'short_answer_question' ) {
+            foreach( $correct as $cor ) {
+                $varequal = $conditionvar->addChild("varequal",$cor);
+                $varequal->addAttribute("respident", "response1");
+            }
+        } else { // 'multiple_answers_question' 
+            $and = $conditionvar->addChild("and");
+            foreach( $correct as $cor ) {
+                $varequal = $and->addChild("varequal",$cor);
+                $varequal->addAttribute("respident", "response1");
+            }
+            foreach( $incorrect as $incor ) {
+                $not = $conditionvar->addChild("not");
+                $varequal = $not->addChild("varequal",$incor);
+                $varequal->addAttribute("respident", "response1");
+            }
+        }
         $setvar = $respcondition->addChild("setvar", 100);
         $setvar->addAttribute("action", "Set");
         $setvar->addAttribute("varname", "SCORE");
@@ -142,7 +168,7 @@ foreach($questions as $question) {
         $respcondition->addAttribute("continue", "No");
         $conditionvar = $respcondition->addChild("conditionvar");
         $other = $conditionvar->addChild("other");
-
+        continue; // XXX
     }
 
 }

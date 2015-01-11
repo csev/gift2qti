@@ -43,19 +43,19 @@ foreach ( $raw_questions as $raw ) {
         continue;
     }
     $answer = trim(substr($text,$spos+1, $epos-$spos-1));
+    // We won't know until later if the question is short answer or not.
     if ( $epos == strlen($text)-1 ) {
         $question = trim(substr($text,0,$spos-1));
-        $type = 'unknown';
+        $sa_question = trim(substr($text,0,$spos-1)) . "[_____]";
     } else {
-        $question = trim(substr($text,0,$spos-1)) . " [_____] " . trim(substr($text,$epos+1));
-        $type = 'short_answer_question';
-        
-        $errors[] = "Short answer questions not yet supported: ".$raw;
-        continue;
+        $question = trim(substr($text,0,$spos-1)) . " " . trim(substr($text,$epos+1));
+        $sa_question = trim(substr($text,0,$spos-1)) . " [_____] " . trim(substr($text,$epos+1));
     }
 
-    if ( $type == 'short_answer_question' ) {
-        // We are good...
+    if ( strpos($answer, "->" ) > 0 ) {
+        $type = 'matching_question'; // CHECK THIS
+        $errors[] = "Matching questions not yet supported: ".$raw;
+        continue;
     } else if ( strpos($answer,"T") === 0 || strpos($answer, "F") === 0 ) {
         $type = 'true_false_question';
     } else if ( strlen($answer) < 1 ) {
@@ -65,7 +65,7 @@ foreach ( $raw_questions as $raw ) {
         $errors[] = "Numerical questions not yet supported: ".$raw;
         continue;
     }  else if ( strpos($answer,"=") === 0 || strpos($answer, "~") === 0 ) {
-        $type = 'multiple_choice_question';
+        $type = 'multiple_choice_question';  // Also will be multiple_answer and short_answer
     } else { 
         $errors[] = "Could not determine question type: ".$raw;
         continue;
@@ -73,7 +73,9 @@ foreach ( $raw_questions as $raw ) {
     $answers = array();
     $parsed_answer = false;
     $correct_answers = 0;
-    if ( $type == 'short_answer_question' || $type == 'multiple_choice_question') {
+    $incorrect_answers = 0;
+    // Also will be multiple_answer_question and short_answer_question
+    if ( $type == 'multiple_choice_question') {
         $parsed_answer = array();
         $correct = null;
         $answer_text = false;
@@ -81,6 +83,7 @@ foreach ( $raw_questions as $raw ) {
         $in_feedback = false;
         for($i=0;$i<strlen($answer)+1; $i++ ) {
             $ch = $i < strlen($answer) ? $answer[$i] : -1;
+
             // echo $i," ", $ch, "\n";
             // Finish up the previous entry
             if ( ( $ch == -1 || $ch == '=' || $ch == "~" ) && strlen($answer_text) > 0 ) {
@@ -89,7 +92,11 @@ foreach ( $raw_questions as $raw ) {
                     $parsed_answer = array();
                     break;
                 }
-                if ( $correct ) $correct_answers++;
+                if ( $correct ) {
+                    $correct_answers++;
+                } else {
+                    $incorrect_answers++;
+                }
                 $parsed_answer[] = array($correct, trim($answer_text), trim($feedback));
                 // Set up for the next one
                 $correct = null;
@@ -126,14 +133,20 @@ foreach ( $raw_questions as $raw ) {
         }
         if ( count($parsed_answer) < 1 ) {
             $errors[] = "Mal-formed answer sequence: ".$raw;
+            continue;
         }
         if ( $correct_answers < 1 ) {
             $errors[] = "No correct answers found: ".$raw;
             continue;
-        }
-        if ( $correct_answers > 1 ) {
+        } else if ( $correct_answers == 1 && $incorrect_answers > 0 ) {
+            $type = 'multiple_choice_question';
+        } else if ( $correct_answers > 1 && $incorrect_answers > 0 ) {
             $type = 'multiple_answers_question';
-            $errors[] = "No support for multiple_answers_question type: ".$raw;
+        } else if ( $correct_answers > 0 && $incorrect_answers == 0 ) {
+            $type = 'short_answer_question';
+            $question = $sa_question;
+        } else {
+            $errors[] = "Could not determine question type: ".$raw;
             continue;
         }
     }

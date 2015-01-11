@@ -5,36 +5,40 @@ session_start();
 
 $text = 
 "// true/false
-::Q1:: 1+1=2 {T}
+::Q1 T/F:: 1+1=2 {T}
 
 // multiple choice with specified feedback for right and wrong answers
-::Q2:: What's between orange and green in the spectrum? 
+::Q2 MC:: What's between orange and green in the spectrum? 
 { =yellow # right; good! ~red # wrong, it's yellow ~blue # wrong, it's yellow }
 
-// fill-in-the-blank
-::Q3:: Two plus {=two =2} equals four.
+// multiple choice with multiple right and wrong
+::Q3 MA:: Two of these are right and two are wrong
+{ =Right 1 =Right 2 ~Wrong 1 ~Wrong 2}
 
-// matching
-::Q4:: Which animal eats which food? { =cat -> cat food =dog -> dog food }
+// fill-in-the-blank (only right answers)
+::Q4 Short Answer:: Two plus {=two =2} equals four.
+
+// matching (All right answers with -> )
+::Q5 Matching:: Which animal eats which food? 
+{ =cat -> cat food =dog -> dog food }
 
 // math range question
-::Q5:: What is a number from 1 to 5? {#3:2}
+::Q6 Range colon:: What is a number from 1 to 5? {#3:2}
 
 // math range specified with interval end points
-::Q6:: What is a number from 1 to 5? {#1..5}
-// translated on import to the same as Q5, but unavailable from Moodle question interface
+::Q7 Range ..:: What is a number from 1 to 5? {#1..5}
 
 // multiple numeric answers with partial credit and feedback
-::Q7:: When was Ulysses S. Grant born? {#
+::Q8 Partial Credit Numeric:: When was Ulysses S. Grant born? {#
          =1822:0      # Correct! Full credit.
          =%50%1822:2  # He was born in 1822. Half credit for being close.
 }
 
 // essay
-::Q8:: How are you? {}
+::Q9 Essay:: How are you? {}
 
 // HTML with pre tags html code style
-::Q9::[html]The next two lines are in a pre tag.<br/>
+::Q10 HTML::[html]The next two lines are in a pre tag.<br/>
 <pre>
    Here is a less-than &lt;
    and an ampersand &amp;
@@ -43,7 +47,7 @@ An some non-pre text after the pre section is done.
 { =yellow # right; good! ~red # wrong, it's yellow ~blue # wrong, it's yellow }
 
 // HTML with pre tags python code style
-::Q10::[html]Some code in a pre block<br/>
+::Q11 HTML Python::[html]Some code in a pre block<br/>
 <pre>
     if x &lt; 10 :
         print \"too low\"
@@ -54,13 +58,13 @@ An some HTML after the end of the pre block
 { =yellow # right; good! ~red # wrong, it's yellow ~blue # wrong, it's yellow }
 
 // Make sure < and > make it through in plaintext questions
-::Q11:: In a plaintext question, does the <b> bold tag 'show' 
+::Q12 Plaintext test:: In a plaintext question, does the <b> bold tag 'show' 
 \"with\" less than's and greater than's instead of turning stuff bold.
 { =Do we see a < less than ~Do we see a > greater than 
 ~Do we see a ' single quote ~Do we see a \" double quote}
 
 // HTML with formatting
-::Q11::[html]In an HTML question, <b>bold</b> should simply appear as bold?
+::Q11 HTML with formatting::[html]In an HTML question, <b>bold</b> should simply appear as bold?
 { =yellow # right; good! ~red # wrong, it's yellow ~blue # wrong, it's yellow }";
 
 unset($_SESSION['content_item_return_url']);
