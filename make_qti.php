@@ -93,7 +93,6 @@ foreach($questions as $question) {
 
         $response_lid = $presentation->addChild('response_lid');
         $response_lid->addAttribute("ident", "response1");
-        $response_lid->addAttribute("rcardinality", "Single");
         $render_choice = $response_lid->addChild('render_choice');
 
         $correct = array();;
@@ -123,14 +122,17 @@ foreach($questions as $question) {
         $respcondition->addAttribute("continue", "No");
         $conditionvar = $respcondition->addChild("conditionvar");
         if ( $question->type == 'multiple_choice_question' ) {
+            $response_lid->addAttribute("rcardinality", "Single");
             $varequal = $conditionvar->addChild("varequal",$correct[0]);
             $varequal->addAttribute("respident", "response1");
         } else if ( $question->type == 'short_answer_question' ) {
+            $response_lid->addAttribute("rcardinality", "Single");
             foreach( $correct as $cor ) {
                 $varequal = $conditionvar->addChild("varequal",$cor);
                 $varequal->addAttribute("respident", "response1");
             }
         } else { // 'multiple_answers_question' 
+            $response_lid->addAttribute("rcardinality", "Multiple");
             $and = $conditionvar->addChild("and");
             foreach( $correct as $cor ) {
                 $varequal = $and->addChild("varequal",$cor);
