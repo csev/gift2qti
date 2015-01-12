@@ -7,7 +7,47 @@
 function xml_double_encode_string($str) {
     $from = array('&', '\'', '"', '<', '>');
     $to = array('&amp;', '&apos;', '&quot;', '&amp;lt;', '&amp;gt;');
+    $to = array('&amp;', '&apos;', '&quot;', '&lt;', '&gt;');
     return(str_replace($from, $to, $str));
+}
+
+// Since the pattern of 
+//    $mattext = $material->addChild("mattext");
+//    $material->mattext = $questext;
+// Will escape everything < > " " except for an & we pre-escape the 
+// ampersands
+function plain_to_html_in_xml($questext) {
+    return str_replace("&","&amp;",$questext);
+}
+
+/**
+ * From http://stackoverflow.com/questions/3957360/generating-xml-document-in-php-escape-characters
+ * @param $arr1 the single string that shall be masked
+ * @return the resulting string with the masked characters
+ */
+function html_in_xml_replace_char($arr1)
+{
+    if (strpos ($arr1,'&')!== FALSE) { //test if the character appears 
+        $arr1=preg_replace('/&/','&amp;', $arr1); // do this first
+    }
+
+    // just encode the 
+    if (strpos ($arr1,'>')!== FALSE) {
+        $arr1=preg_replace('/>/','&gt;', $arr1);
+    }
+    if (strpos ($arr1,'<')!== FALSE) {
+        $arr1=preg_replace('/</','&lt;', $arr1);
+    }
+
+    if (strpos ($arr1,'"')!== FALSE) {
+        $arr1=preg_replace('/"/','&quot;', $arr1);
+    }
+
+    if (strpos ($arr1,'\'')!== FALSE) {
+        $arr1=preg_replace('/\'/','&apos;', $arr1);
+    }
+
+    return $arr1;
 }
 
 $QTI = simplexml_load_file('xml/assessment.xml');
@@ -41,11 +81,17 @@ foreach($questions as $question) {
     $material = $presentation->addChild("material");
     $questext = $question->question;
     if ( strpos($questext,"[html]") === 0 ) {
+        // Here we are depending on 
         $questext = ltrim(substr($questext,6));
+        // $questext = xml_double_encode_string($questext);
     } else {
-        $questext = xml_double_encode_string(ltrim($questext));
+        $questext = ltrim($questext);
+        $questext = xml_double_encode_string($questext);
+        //$questext = plain_to_html_in_xml($questext);
     }
-    $mattext = $material->addChild("mattext", $questext);
+    // $mattext = $material->addChild("mattext", $questext);
+    $mattext = $material->addChild("mattext");
+    $material->mattext = $questext;
     $mattext->addAttribute("texttype", 'text/html');
 
     if ( $question->type == 'true_false_question' ) {
@@ -107,7 +153,8 @@ foreach($questions as $question) {
             $response_label = $render_choice->addChild('response_label');
             $response_label->addAttribute('ident', $val);
             $material = $response_label->addChild("material");
-            $mattext = $material->addChild("mattext", $parsed_answer[1]);
+            $mattext = $material->addChild("mattext");
+            $material->mattext = $parsed_answer[1];
             $mattext->addAttribute("texttype", "text/plain");
         }
 

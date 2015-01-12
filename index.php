@@ -8,8 +8,8 @@ $text =
 ::Q1 T/F:: 1+1=2 {T}
 
 // multiple choice with specified feedback for right and wrong answers
-::Q2 MC:: What's between orange and green in the spectrum? 
-{ =yellow # right; good! ~red # wrong, it's yellow ~blue # wrong, it's yellow }
+::Q2 MC:: Plaintext torture test < > & ; ' \" &lt; &gt; <b> (answer is &lt;)
+{ =< # right; good! ~> # wrong, it's < ~& # wrong, it's < }
 
 // multiple choice with multiple right and wrong
 ::Q3 MA:: Two of these are right and two are wrong
@@ -58,14 +58,40 @@ An some HTML after the end of the pre block
 { =yellow # right; good! ~red # wrong, it's yellow ~blue # wrong, it's yellow }
 
 // Make sure < and > make it through in plaintext questions
-::Q12 Plaintext test:: In a plaintext question, does the <b> bold tag 'show' 
+::Q12 Plaintext:: In a plaintext question, does the <b> bold tag 'show' 
 \"with\" less than's and greater than's instead of turning stuff bold.
 { =Do we see a < less than ~Do we see a > greater than 
 ~Do we see a ' single quote ~Do we see a \" double quote}
 
 // HTML with formatting
 ::Q11 HTML with formatting::[html]In an HTML question, <b>bold</b> should simply appear as bold?
-{ =yellow # right; good! ~red # wrong, it's yellow ~blue # wrong, it's yellow }";
+{ =yellow # right; good! ~red # wrong, it's yellow ~blue # wrong, it's yellow }
+
+::Q12::[html] What is true about the following HMTL?
+<pre>
+&lt;a href=\"http://www.dr-chuck.com/page2.htm\"&gt;Second Page&lt;/a&gt;
+</pre>
+{
+=The reference is an absolute reference
+~The reference is a relative reference
+~The HTML is improperly formed and will be a syntax error
+~The text \"Second Page\" is improperly placed and will not be seen
+}
+
+::Q13::[html] For the following HTML, what does the \"style=\" attribute
+achieve?
+<pre>
+&lt;p style=\"color: red;\"&gt;
+</pre>
+{
+=It allows the application of CSS rules to the contents of the tag
+~It is an HTML syntax error and will be ignored
+~It changes the background color of the paragreaph to red
+~It contains JavaScript to be executed when the ofer hovers over the paragraph
+~It changes the color of the tab for this page in thr borwser to be red
+}
+
+";
 
 unset($_SESSION['content_item_return_url']);
 if ( isset($_POST['ext_content_return_url']) ) $_SESSION['content_item_return_url'] = $_POST['ext_content_return_url'];
