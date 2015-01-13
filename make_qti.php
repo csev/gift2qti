@@ -50,7 +50,9 @@ function html_in_xml_replace_char($arr1)
     return $arr1;
 }
 
-$QTI = simplexml_load_file('xml/assessment.xml');
+// Somehow simplexml_load_file() seems to get confused now and then..
+$data = file_get_contents(getcwd().'/xml/assessment.xml');
+$QTI = simplexml_load_string($data);
 $uuid = uniqid();
 $offset=100;
 unset($QTI->assessment);
