@@ -130,11 +130,11 @@ foreach ( $raw_questions as $raw ) {
         $answer_text = false;
         $feedback = false;
         $in_feedback = false;
+
         for($i=0;$i<strlen($answer)+1; $i++ ) {
             $ch = $i < strlen($answer) ? $answer[$i] : -1;
-
-            // Handle ecape sequences
-            if ( $ch == '\\' && $i < strlen($answer)-2) {
+            // Handle escape sequences
+            if ( $ch == '\\' && $i < strlen($answer)-1) {
                 $nextch = $answer[$i+1];
                 if ( strpos("~=#{}:->%",$nextch) !== false ) {
                     if ( $in_feedback ) {
