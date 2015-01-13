@@ -5,15 +5,16 @@ session_start();
 
 $text = 
 "// true/false
-::Q1 T/F:: 1+1=2 {T}
+::Q1 T/F:: 1+1=2 \\{yada\\} {T}
 
 // multiple choice with specified feedback for right and wrong answers
-::Q2 MC:: Plaintext torture test < > & ; ' \" &lt; &gt; <b> (answer is &lt;)
+::Q2 MC:: Plaintext test < > & ; ' \" &lt; &gt; <b> (answer is &lt;)
 { =< # right; good! ~> # wrong, it's < ~& # wrong, it's < }
 
 // multiple choice with multiple right and wrong
-::Q3 MA:: Two of these are right and two are wrong
-{ =Right 1 =Right 2 ~Wrong 1 ~Wrong 2}
+::Q3 MA:: Two of these are \\{right\\} and two are wrong 
+and GIFT escape character test
+{ =Right \{1\} =Right \= 2 ~Wrong \~ 1 ~Wrong \ 2}
 
 // fill-in-the-blank (only right answers)
 ::Q4 Short Answer:: Two plus {=two =2} equals four.
@@ -88,7 +89,7 @@ achieve?
 ~It is an HTML syntax error and will be ignored
 ~It changes the background color of the paragreaph to red
 ~It contains JavaScript to be executed when the ofer hovers over the paragraph
-~It changes the color of the tab for this page in thr borwser to be red
+~It changes the color of the tab for this page in the borwser to be red
 }
 
 ";

@@ -35,14 +35,56 @@ foreach ( $raw_questions as $raw ) {
     // print_r($pieces);
     $name = trim($pieces[1]);
     $text = trim($pieces[2]);
-    $spos = strpos($text,'{');
-    $epos = strpos($text,'}', $spos);
-    // echo $spos, " ", $epos, "\n";
-    if ( $spos < 1 || $epos < 1 ) {
+    $spos = false;
+    $epos = false;
+    $answer = false;
+    $escape = false;
+    // echo("==================\n".$text."\n");
+    // Parse out the overall question and answer.
+    for ( $i=0; $i < strlen($text); $i++ ) {
+        $ch = $text[$i];
+        // Eat up the \{ and \} escapes
+        if ( $escape && ($ch == '{' || $ch == '}') ) {
+            if ( $answer !== false ) $answer .= $ch;
+            $escape = false;
+            continue;
+        }
+        if ( $ch == '\\' && ! $escape ) {
+            $escape = true;
+            continue;
+        }
+
+        if ( $answer === false ) {
+            if ( $ch != '{' ) continue;
+            $answer = "";
+            $spos = $i;
+            continue;
+        }
+        if ( $ch == '}' ) {
+            $epos = $i;
+            break;
+        }
+        if ( $escape ) {
+            $answer .= '\\';
+            $answer .= $ch;
+            $escape = false;
+        } else {
+            if ( $ch == '\\' ) {
+                $escape = true;
+                continue;
+            }
+            $answer .= $ch;
+        }
+    }
+
+    // echo("Answer=".$answer."\n");
+
+    if ( $answer !== false ) $answer = trim($answer);
+
+    if ( $answer === false ) {
         $errors[] = "Could not find answer: ".$raw;
         continue;
     }
-    $answer = trim(substr($text,$spos+1, $epos-$spos-1));
     // We won't know until later if the question is short answer or not.
     if ( $epos == strlen($text)-1 ) {
         $question = trim(substr($text,0,$spos-1));
@@ -51,6 +93,11 @@ foreach ( $raw_questions as $raw ) {
         $question = trim(substr($text,0,$spos-1)) . " " . trim(substr($text,$epos+1));
         $sa_question = trim(substr($text,0,$spos-1)) . " [_____] " . trim(substr($text,$epos+1));
     }
+
+    // Fix the remaining escapes in the question
+    $question = str_replace(array('\\{','\\}'), array('{', '}'),$question);
+
+    // echo("Question=".$question."\n");
 
     if ( strpos($answer, "->" ) > 0 ) {
         $type = 'matching_question'; // CHECK THIS
@@ -83,6 +130,20 @@ foreach ( $raw_questions as $raw ) {
         $in_feedback = false;
         for($i=0;$i<strlen($answer)+1; $i++ ) {
             $ch = $i < strlen($answer) ? $answer[$i] : -1;
+
+            // Handle ecape sequences
+            if ( $ch == '\\' && $i < strlen($answer)-2) {
+                $nextch = $answer[$i+1];
+                if ( strpos("~=#{}",$nextch) !== false ) {
+                    if ( $in_feedback ) {
+                        $feedback .= $nextch;
+                    } else {
+                        $answer_text .= $nextch;
+                    }
+                    $i = $i + 1;  // Advance past the nextch
+                    continue;
+                }
+            }
 
             // echo $i," ", $ch, "\n";
             // Finish up the previous entry
