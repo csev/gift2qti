@@ -39,6 +39,7 @@ foreach ( $raw_questions as $raw ) {
     $epos = false;
     $answer = false;
     $escape = false;
+    $found = false;
     // echo("==================\n".$text."\n");
     // Parse out the overall question and answer.
     for ( $i=0; $i < strlen($text); $i++ ) {
@@ -62,6 +63,7 @@ foreach ( $raw_questions as $raw ) {
         }
         if ( $ch == '}' ) {
             $epos = $i;
+            $found = true;
             break;
         }
         if ( $escape ) {
@@ -77,14 +79,14 @@ foreach ( $raw_questions as $raw ) {
         }
     }
 
-    // echo("Answer=".$answer."\n");
-
-    if ( $answer !== false ) $answer = trim($answer);
-
-    if ( $answer === false ) {
+    if ( $found === false ) {
         $errors[] = "Could not find answer: ".$raw;
         continue;
     }
+
+    $answer = trim($answer);
+    // echo("Answer=".$answer."\n");
+
     // We won't know until later if the question is short answer or not.
     if ( $epos == strlen($text)-1 ) {
         $question = trim(substr($text,0,$spos-1));
@@ -134,7 +136,7 @@ foreach ( $raw_questions as $raw ) {
             // Handle ecape sequences
             if ( $ch == '\\' && $i < strlen($answer)-2) {
                 $nextch = $answer[$i+1];
-                if ( strpos("~=#{}",$nextch) !== false ) {
+                if ( strpos("~=#{}:->%",$nextch) !== false ) {
                     if ( $in_feedback ) {
                         $feedback .= $nextch;
                     } else {
