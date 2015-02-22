@@ -2,6 +2,7 @@
 
 require_once "util.php";
 session_start();
+header('Content-Type: text/html; charset=utf-8');
 
 $text = 
 "// true/false
