@@ -134,8 +134,15 @@ onclick="$('#myModal').modal('show');"></p>
 Do not validate the XML</p>
 </form>
 <p>If you want to add this tool to the <b>Settings -&gt; Import Content</b>
-in the Canvas LMS use this URL:
-<a href="<?= $config_url ?>" target="_blank"><?= $config_url ?></a>
+in the Canvas LMS do this:
+<pre>
+Settings / Apps / View App Configurations / Add App 
+
+Configuration type: By URL
+URL: <a href="<?= $config_url ?>" target="_blank"><?= $config_url ?></a>
+Key: 12345
+Secret: secret
+</pre>
 </p>
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
