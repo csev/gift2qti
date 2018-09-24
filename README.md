@@ -24,6 +24,14 @@ You can play with my demo server at:
 This is an early version and only supports multipla choice, true/false, and essay
 question types.  Other types wont' be hard - but I ran out of time.
 
+You can also set up your own server if you have a computer with PHP.  Download or clone 
+this repository and then navigate to the directory and run the following command to run
+a webserver.
+
+> php -S localhost:8000
+
+Then open a browser and use `localhost:8000` as the address in your browser's navigation bar.
+
 Comments (and Pull requests) welcome.
 
 -- Chuck
