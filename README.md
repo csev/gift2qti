@@ -19,7 +19,7 @@ idea if I do say so myself.  I like it because I can put quizzes in GitHub :)
 
 You can play with my demo server at:
 
-    https://www.tsug.org/gift2qti/
+    https://www.tsugi.org/gift2qti/
 
 This is an early version and only supports multipla choice, true/false, and essay
 question types.  Other types wont' be hard - but I ran out of time.
